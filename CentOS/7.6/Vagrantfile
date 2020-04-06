@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile: CentOS 7.6
+#
+# Por Tiago Geremias <tiagopgeremias@gmail.com>
+# https://github.com/tiagopgeremias/vagrant-templates
+#
+# Atualizado: 04/04/2020
+
+
+SONAME = "centos/7"
+VMNAME = "CentOS"
+HOSTNAME = "centos-server"
+IPADDRESS = ""
+NETWORK_ADAPTER = ""
+MEMORY = "1024"
+PUBLIC_SSHKEY_PATH = "~/.ssh/id_dsa.pub"
+
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = SONAME
+  config.vm.hostname = HOSTNAME
+  config.ssh.shell = "sh"
+
+  config.vm.network "public_network", bridge: NETWORK_ADAPTER, ip: IPADDRESS
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = VMNAME
+    vb.gui = false
+    vb.memory = MEMORY
+  end
+  config.vm.provision "file", source: PUBLIC_SSHKEY_PATH, destination: "~/.ssh/authorized_keys"
+  config.vm.provision "shell", inline: <<-SHELL
+    cat /etc/os-release
+  SHELL
+end
