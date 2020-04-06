@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile: Debian 8.11
+#
+# Por Tiago Geremias <tiagopgeremias@gmail.com>
+# https://github.com/tiagopgeremias/vagrant-templates
+#
+# Atualizado: 06/04/2020
+
+
+SONAME = "debian/jessie64"
+VMNAME = "Debian8.11"
+HOSTNAME = "debian8-server"
+IPADDRESS = ""
+NETWORK_ADAPTER = ""
+MEMORY = "512"
+PUBLIC_SSHKEY_PATH = "~/.ssh/id_dsa.pub"
+
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = SONAME
+  config.vm.hostname = HOSTNAME
+  config.ssh.shell = "sh"
+
+  config.vm.network "public_network", bridge: NETWORK_ADAPTER, ip: IPADDRESS
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = VMNAME
+    vb.gui = false
+    vb.memory = MEMORY
+  end
+  config.vm.provision "file", source: PUBLIC_SSHKEY_PATH, destination: "~/.ssh/authorized_keys"
+  config.vm.provision "shell", inline: <<-SHELL
+    cat /etc/os-release
+  SHELL
+end
